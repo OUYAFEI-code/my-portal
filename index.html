@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人门户大厅 - 欧亚菲</title>
+    <meta name="description" content="AI作品集与个人简历展示">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* 现代配色方案 - 优雅深色主题 */
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --bg-card-hover: #22222e;
+
+            /* 渐变色 */
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-warm: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+
+            /* 文字颜色 */
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-tertiary: #6b6b7b;
+
+            /* 强调色 */
+            --accent-purple: #667eea;
+            --accent-pink: #f5576c;
+            --accent-cyan: #00f2fe;
+
+            /* 阴影 */
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.3);
+
+            /* 间距 */
+            --spacing-xs: 0.5rem;
+            --spacing-sm: 1rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2rem;
+            --spacing-xl: 3rem;
+
+            /* 圆角 */
+            --radius-sm: 12px;
+            --radius-md: 16px;
+            --radius-lg: 24px;
+            --radius-full: 9999px;
+
+            /* 字体 */
+            --font-sans: 'Inter', 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 背景动画效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(245, 87, 108, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 242, 254, 0.05) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes backgroundShift {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(5%, 5%) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-5%, 5%) rotate(240deg);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-xl) 0;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto var(--spacing-md);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .avatar-wrapper::before {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            animation: rotate 8s linear infinite;
+            z-index: -1;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: var(--radius-full);
+            object-fit: cover;
+            border: 4px solid var(--bg-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: var(--spacing-xs);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Bento Grid 布局 */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        /* 便当盒卡片 */
+        .bento-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .bento-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .bento-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .bento-card:active {
+            transform: translateY(-4px) scale(0.98);
+        }
+
+        /* 不同卡片的渐变色 */
+        .bento-card.card-resume::before {
+            background: var(--gradient-primary);
+        }
+
+        .bento-card.card-project::before {
+            background: var(--gradient-secondary);
+        }
+
+        .bento-card-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-md);
+            font-size: 1.8rem;
+            box-shadow: var(--shadow-md);
+            transition: transform 0.4s ease;
+        }
+
+        .bento-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-project .card-icon {
+            background: var(--gradient-secondary);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-xs);
+            color: var(--text-primary);
+        }
+
+        .card-description {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .card-meta {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.25rem 0.75rem;
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent-purple);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .card-project .card-badge {
+            background: rgba(245, 87, 108, 0.15);
+            color: var(--accent-pink);
+            border-color: rgba(245, 87, 108, 0.3);
+        }
+
+        /* 大卡片样式 */
+        .bento-card.large {
+            grid-column: span 2;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-xl) 0;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+            margin-top: var(--spacing-xl);
+            animation: fadeIn 1s ease-out 0.4s both;
+        }
+
+        .footer a {
+            color: var(--accent-purple);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: var(--accent-cyan);
+        }
+
+        /* 动画 */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header .subtitle {
+                font-size: 1rem;
+            }
+
+            .avatar-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+
+            .bento-grid {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-sm);
+            }
+
+            .bento-card.large {
+                grid-column: span 1;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .card-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .bento-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1025px) {
+            .bento-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .bento-card.large {
+                grid-column: span 2;
+            }
+        }
+
+        /* 微交互 - 点击波纹效果 */
+        .bento-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="avatar-wrapper">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 400'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill='url(%23grad)' width='400' height='400'/%3E%3Ctext x='200' y='220' font-family='Arial' font-size='120' fill='white' text-anchor='middle' font-weight='bold'%3E欧%3C/text%3E%3C/svg%3E"
+                    alt="欧亚菲" class="avatar" id="avatarImage">
+            </div>
+            <h1>欧亚菲</h1>
+            <p class="subtitle">产品经理 · 作品集展示</p>
+        </header>
+
+        <!-- Bento Grid 主内容区 -->
+        <div class="bento-grid">
+            <!-- 个人简历卡片 -->
+            <a href="https://resume.happy-ou-ai.top/" class="bento-card card-resume" target="_blank"
+                rel="noopener noreferrer">
+                <div class="bento-card-content">
+                    <div class="card-icon">📄</div>
+                    <h2 class="card-title">个人简历</h2>
+                    <p class="card-description">
+                        查看我的完整工作经历、项目经验和专业技能。
+                    </p>
+                    <div class="card-meta">
+                        <span class="card-badge">在线简历</span>
+                        <span>→ 点击查看详情</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 作品：产品研讨会Demo -->
+            <a href="https://seminardemo.happy-ou-ai.top/" class="bento-card card-project" target="_blank"
+                rel="noopener noreferrer">
+                <div class="bento-card-content">
+                    <div class="card-icon">💼</div>
+                    <h2 class="card-title">产品研讨会Demo</h2>
+                    <p class="card-description">
+                        产品研讨会交互演示，展示产品设计流程与团队协作模式。
+                    </p>
+                    <div class="card-meta">
+                        <span class="card-badge">演示项目</span>
+                        <span>→ 查看演示</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 作品：个人绩效整理Demo -->
+            <a href="https://monthly-performance.happy-ou-ai.top/" class="bento-card card-project" target="_blank"
+                rel="noopener noreferrer">
+                <div class="bento-card-content">
+                    <div class="card-icon">📊</div>
+                    <h2 class="card-title">个人绩效整理Demo</h2>
+                    <p class="card-description">
+                        个人绩效管理系统演示，智能化的工作成果整理与分析工具。
+                    </p>
+                    <div class="card-meta">
+                        <span class="card-badge">工具项目</span>
+                        <span>→ 体验工具</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- 游戏作品：复仇者联盟机场大战挑战 -->
+            <a href="https://game.happy-ou-ai.top/" class="bento-card card-project" target="_blank"
+                rel="noopener noreferrer">
+                <div class="bento-card-content">
+                    <div class="card-icon">🎮</div>
+                    <h2 class="card-title">复仇者联盟机场大挑战</h2>
+                    <p class="card-description">
+                        卡片互动游戏项目，融合创意设计与用户体验优化，打造沉浸式娱乐体验。
+                    </p>
+                    <div class="card-meta">
+                        <span class="card-badge">游戏项目</span>
+                        <span>→ 立即体验</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>© 2026 欧亚菲 · 用AI尝试设计每一个产品</p>
+        </footer>
+    </div>
+
+    <script>
+        // 点击波纹效果
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                this.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // 尝试加载用户提供的头像
+        const avatarImg = document.getElementById('avatarImage');
+        const userAvatar = 'avatar.png'; // 用户可以将头像文件命名为 avatar.png 放在同目录下
+
+        // 检测头像文件是否存在
+        fetch(userAvatar)
+            .then(response => {
+                if (response.ok) {
+                    avatarImg.src = userAvatar;
+                }
+            })
+            .catch(() => {
+                // 保持默认头像
+                console.log('使用默认头像');
+            });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 页面加载动画
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+
+</html>
