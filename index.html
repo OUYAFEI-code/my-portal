@@ -515,6 +515,29 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
         }
 
+        .message-email-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 15, 0.9);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .message-email-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .message-email-input:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
+            background: rgba(10, 10, 20, 0.95);
+        }
+
         .message-input::placeholder {
             color: var(--text-tertiary);
         }
@@ -757,6 +780,8 @@
             <h2 class="message-board-title">访客留言板</h2>
             <p class="message-board-subtitle">欢迎给我留言，分享你的想法或建议。</p>
             <form id="message-form" class="message-form">
+                <input id="email-input" class="message-email-input" type="email" placeholder="你的邮箱（必填，用于后续联系）"
+                    required />
                 <textarea id="message-input" class="message-input" placeholder="写点什么吧..." maxlength="500"
                     required></textarea>
                 <div class="message-actions">
@@ -848,6 +873,7 @@
 
         const messageForm = document.getElementById('message-form');
         const messageInput = document.getElementById('message-input');
+        const emailInput = document.getElementById('email-input');
         const messageSubmit = document.getElementById('message-submit');
         const messageStatus = document.getElementById('message-status');
         const messageList = document.getElementById('message-list');
@@ -922,9 +948,15 @@
             messageForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const content = (messageInput?.value || '').trim();
+                const email = (emailInput?.value || '').trim();
 
                 if (!content) {
                     setStatus('请输入留言内容。', 'error');
+                    return;
+                }
+
+                if (!email) {
+                    setStatus('请输入邮箱。', 'error');
                     return;
                 }
 
@@ -939,7 +971,7 @@
 
                     const { error } = await supabaseClient
                         .from('messages')
-                        .insert([{ content }]);
+                        .insert([{ content, email }]);
 
                     if (error) {
                         console.error('提交留言失败', error);
@@ -950,6 +982,9 @@
                     // 提交成功后清空输入框
                     if (messageInput) {
                         messageInput.value = '';
+                    }
+                    if (emailInput) {
+                        emailInput.value = '';
                     }
 
                     setStatus('提交成功！', 'success');
