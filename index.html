@@ -470,6 +470,155 @@
                 opacity: 0;
             }
         }
+
+        /* 留言板样式 */
+        .message-board {
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .message-board-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .message-board-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .message-form {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .message-input {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 10, 15, 0.9);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+
+        .message-input::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .message-input:focus {
+            border-color: rgba(102, 126, 234, 0.8);
+            box-shadow: 0 0 0 1px rgba(102, 126, 234, 0.5);
+            background: rgba(10, 10, 20, 0.95);
+        }
+
+        .message-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        .message-submit {
+            padding: 0.55rem 1.4rem;
+            border-radius: var(--radius-full);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: var(--gradient-primary);
+            color: #fff;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+
+        .message-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .message-submit:active {
+            transform: translateY(0);
+            box-shadow: var(--shadow-sm);
+            opacity: 0.9;
+        }
+
+        .message-submit[disabled] {
+            opacity: 0.6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .message-status {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        .message-status--error {
+            color: #f5576c;
+        }
+
+        .message-status--success {
+            color: #4caf50;
+        }
+
+        .message-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 260px;
+            overflow-y: auto;
+            padding-right: 0.25rem;
+        }
+
+        .message-item {
+            padding: 0.6rem 0.8rem;
+            border-radius: var(--radius-md);
+            background: rgba(18, 18, 26, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+        }
+
+        .message-content {
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .message-meta {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .message-board {
+                margin-top: var(--spacing-lg);
+                padding: var(--spacing-md);
+            }
+
+            .message-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 
@@ -603,12 +752,28 @@
             </a>
         </div>
 
+        <!-- 留言板 -->
+        <section id="message-board" class="message-board">
+            <h2 class="message-board-title">访客留言板</h2>
+            <p class="message-board-subtitle">欢迎给我留言，分享你的想法或建议。</p>
+            <form id="message-form" class="message-form">
+                <textarea id="message-input" class="message-input" placeholder="写点什么吧..." maxlength="500"
+                    required></textarea>
+                <div class="message-actions">
+                    <button type="submit" id="message-submit" class="message-submit">提交留言</button>
+                    <span id="message-status" class="message-status"></span>
+                </div>
+            </form>
+            <ul id="message-list" class="message-list"></ul>
+        </section>
+
         <!-- 页脚 -->
         <footer class="footer">
             <p>© 2026 欧亚菲 · 用AI尝试设计每一个产品</p>
         </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // 点击波纹效果
         document.querySelectorAll('.bento-card').forEach(card => {
@@ -669,6 +834,138 @@
                 document.body.style.opacity = '1';
             }, 100);
         });
+
+        // ---------------- 留言板 & Supabase ----------------
+        const SUPABASE_URL = 'https://cinwvuppwnwqdszxtrld.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_O6fUV8JabGQ4YEB5FSn4QQ_Aq9kAbag';
+
+        let supabaseClient = null;
+        if (window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error('Supabase SDK 加载失败');
+        }
+
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const messageSubmit = document.getElementById('message-submit');
+        const messageStatus = document.getElementById('message-status');
+        const messageList = document.getElementById('message-list');
+
+        function setStatus(text, type) {
+            if (!messageStatus) return;
+            messageStatus.textContent = text || '';
+            messageStatus.classList.remove('message-status--error', 'message-status--success');
+            if (type === 'error') {
+                messageStatus.classList.add('message-status--error');
+            } else if (type === 'success') {
+                messageStatus.classList.add('message-status--success');
+            }
+        }
+
+        function formatTime(isoString) {
+            if (!isoString) return '';
+            try {
+                const d = new Date(isoString);
+                return d.toLocaleString('zh-CN', {
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            } catch {
+                return '';
+            }
+        }
+
+        async function loadMessages() {
+            if (!supabaseClient || !messageList) return;
+            setStatus('正在加载留言...', null);
+            const { data, error } = await supabaseClient
+                .from('messages')
+                .select('*')
+                .limit(30);
+
+            if (error) {
+                console.error('加载留言失败', error);
+                setStatus('加载留言失败，请稍后重试。', 'error');
+                return;
+            }
+
+            messageList.innerHTML = '';
+            if (!data || data.length === 0) {
+                setStatus('还没有留言，快来抢第一个吧～', null);
+                return;
+            }
+
+            data.slice().reverse().forEach((msg) => {
+                const li = document.createElement('li');
+                li.className = 'message-item';
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'message-content';
+                contentDiv.textContent = msg.content || '';
+
+                const metaDiv = document.createElement('div');
+                metaDiv.className = 'message-meta';
+                metaDiv.textContent = formatTime(msg.created_at);
+
+                li.appendChild(contentDiv);
+                li.appendChild(metaDiv);
+                messageList.appendChild(li);
+            });
+
+            setStatus('', null);
+        }
+
+        if (messageForm && supabaseClient) {
+            messageForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const content = (messageInput?.value || '').trim();
+
+                if (!content) {
+                    setStatus('请输入留言内容。', 'error');
+                    return;
+                }
+
+                if (!supabaseClient) {
+                    setStatus('后端服务未就绪，请稍后再试。', 'error');
+                    return;
+                }
+
+                try {
+                    messageSubmit.disabled = true;
+                    setStatus('正在提交...', null);
+
+                    const { error } = await supabaseClient
+                        .from('messages')
+                        .insert([{ content }]);
+
+                    if (error) {
+                        console.error('提交留言失败', error);
+                        setStatus('提交失败，请稍后重试。', 'error');
+                        return;
+                    }
+
+                    // 提交成功后清空输入框
+                    if (messageInput) {
+                        messageInput.value = '';
+                    }
+
+                    setStatus('提交成功！', 'success');
+                    // 重新加载一次留言列表
+                    await loadMessages();
+                } catch (err) {
+                    console.error('提交留言异常', err);
+                    setStatus('提交出现异常，请稍后重试。', 'error');
+                } finally {
+                    messageSubmit.disabled = false;
+                }
+            });
+
+            // 首次加载留言
+            loadMessages();
+        }
     </script>
 </body>
 
