@@ -187,6 +187,30 @@
             font-weight: 400;
         }
 
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: 0.5rem 1rem;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: var(--radius-full);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .contact-icon {
+            font-size: 1.1rem;
+        }
+
         /* Bento Grid 布局 */
         .bento-grid {
             display: grid;
@@ -458,7 +482,17 @@
                     alt="欧亚菲" class="avatar" id="avatarImage">
             </div>
             <h1>欧亚菲</h1>
-            <p class="subtitle">AI产品经理 · 作品集展示</p>
+            <p class="subtitle"> AI 产品经理｜专注 AI 应用落地与 0-1 场景构建</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <span>13684902935@126.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <span>13684902935</span>
+                </div>
+            </div>
         </header>
 
         <!-- Bento Grid 主内容区 -->
